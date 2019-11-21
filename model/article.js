@@ -59,9 +59,9 @@ class article {
         return result;
     }
 
-    // title不能为空、字符长度 1-30
+    // title不能为空、字符长度 1-50
     authTitle() {
-        if (!_.isString(this.title) || _.size(this.title) < 1 || _.size(this.title) > 30) {
+        if (!_.isString(this.title) || _.size(this.title) < 1 || _.size(this.title) > 50) {
             return false;
         } else {
             return true;
