@@ -27,6 +27,7 @@ module.exports = {
             port: '3306',    //数据库端口
             user: "root", //数据库用户名
             password: "lIu@123456X", //数据库密码
+            // password: "root", //数据库密码
             database: "liushiyizu", //数据库名
             timeout: 30000,  //请求超时30s
         },

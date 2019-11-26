@@ -40,17 +40,27 @@ var utils = {
             } else {
                 return {
                     code: code === undefined ? config.code.CODE_UNKNOWN_ERROR : code,
-                    message: message||"未知错误",
+                    message: message || "未知错误",
                     success: false
                 }
             }
-        }else{
+        } else {
             return {
-                code:config.code.CODE_UNKNOWN_ERROR,
-                message:error,
-                success:false
+                code: config.code.CODE_UNKNOWN_ERROR,
+                message: error,
+                success: false
             }
         }
+    },
+    dateTime(datetime) {
+        var date = datetime ? new Date(datetime) : new Date();
+        var Y = date.getFullYear();
+        var M = date.getMonth() + 1;
+        var D = date.getDate();
+        var h = date.getHours();
+        var m = date.getMinutes();
+        var s = date.getSeconds();
+        return Y + '-' + M + '-' + D + ' ' + h + ':' + m + ':' + s;
     }
 };
 

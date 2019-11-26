@@ -12,27 +12,30 @@ var userController = require("./controller/user.js");
 
 const app = new Koa();
 
+const isDev = process.env.NODE_ENV == "development" || process.env.NODE_ENV == undefined;
+
 let config = require('./config.js');
 
 async function start() {
     const host = config.server.host;
     const port = config.server.port;
-    // cors 同源策略
-    app.use(cors({
-        origin: function (ctx) {
-            if (ctx.origin === "http://192.168.100.10") {
-                return "http://192.168.100.10:8686";
-            } else if (ctx.origin === "http://localhost:4000") {
-                return "http://localhost:3000"
-            }
-            return false;
-        },
-        exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
-        maxAge: 30,
-        credentials: true,
-        allowMethods: ['GET', 'POST', 'DELETE'],
-        allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'custom-token'],
-    }));
+
+    if (isDev) {
+        // cors 同源策略
+        app.use(cors({
+            origin: function (ctx) {
+                if (ctx.origin === "http://localhost:4000") {
+                    return "http://localhost:3000"
+                }
+                return false;
+            },
+            exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+            maxAge: 30,
+            credentials: true,
+            allowMethods: ['GET', 'POST', 'DELETE'],
+            allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'custom-token'],
+        }));
+    }
 
     // 格式化请求
     app.use(koaBody({
@@ -57,7 +60,7 @@ async function start() {
     }));
 
     // session
-    // session存储配置
+    // redis
     var redisClient = redis.createClient({
         password: config.redis.password,
         host: config.redis.host,
@@ -69,6 +72,7 @@ async function start() {
     redisClient.on("connect", function () {
         console.log('connect redis');
     });
+    // session存储配置
     app.use(session({
         key: config.session.sessionName,
         cookie: function (ctx) {

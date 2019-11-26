@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const utils = require("../utils/utils.js");
 
 class article {
     constructor(article) {
@@ -83,7 +84,7 @@ class article {
         return {
             title: art.title,
             content: art.content,
-            update_date: new Date().toLocaleString()
+            update_date: utils.dateTime()
         }
     }
 

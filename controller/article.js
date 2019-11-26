@@ -25,8 +25,8 @@ async function createArticle(ctx, next) {
     article.id = uuidv4().replace(/-/g, '');
     article.user_id = ctx.session.user.id;
     article.permission = ctx.session.user.permission;
-    article.create_date = new Date().toLocaleString();
-    article.update_date = new Date().toLocaleString();
+    article.create_date = utils.dateTime();
+    article.update_date = utils.dateTime();
     await articleSql.createArticle(article).then(res => {
         if (res.affectedRows > 0) {
             ctx.body = utils.bodyFormat();
