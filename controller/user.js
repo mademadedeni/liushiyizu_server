@@ -274,12 +274,8 @@ async function userInfo(ctx, next) {
             success: true
         }
     } else {
-        if (ctx.cookies.get(config.session.memoryName)) {
-
-            return;
-        }
         ctx.body = {
-            code: config.code.CODE_NOT_LOGIN,
+            code: config.code.CODE_SUCCESS,
             message: "未登录",
             data: null,
             success: false

@@ -1,21 +1,21 @@
 const _ = require("lodash");
 const utils = require("../utils/utils.js");
 
-class article {
-    constructor(article) {
-        if (article === undefined) {
+class travels {
+    constructor(travels) {
+        if (travels === undefined) {
             return;
         }
         var _this = this;
-        var propertys = ["id", "userId", "title", "content", "permission", "createDate", "updateDate"];
+        var propertys = ["id", "userId", "title", "content", "money", "label", "status", "createDate", "updateDate", "permission"];
         _.each(propertys, function (value) {
-            if (article.hasOwnProperty(value)) {
-                _this[value] = article[value];
+            if (travels.hasOwnProperty(value)) {
+                _this[value] = travels[value];
             }
         });
     }
     /**
-     * @description 返回article对象去掉值为undefined的属性
+     * @description 返回travels对象去掉值为undefined的属性
      */
     toSelf() {
         return JSON.parse(JSON.stringify(this));
@@ -34,6 +34,18 @@ class article {
         if (!this.authContent()) {
             return "content";
         }
+        // 验证金钱
+        if (!this.authMoney()) {
+            return "money";
+        }
+        // 验证标签
+        if (!this.authLabel()) {
+            return "label";
+        }
+        // 验证状态
+        if (!this.authStatus()) {
+            return "status";
+        }
         return true;
     }
     /**description 判断更新字段合法性
@@ -41,8 +53,8 @@ class article {
      */
     updateAuth() {
         var result = true;
-        var article = Object.assign({}, this);
-        _.each(article, (value, key) => {
+        var travels = Object.assign({}, this);
+        _.each(travels, (value, key) => {
             switch (key) {
                 case "title":
                     this.authTitle() ? result = true : result = key;
@@ -77,39 +89,47 @@ class article {
             return true;
         }
     }
-
-    // 把对象转换成sql更新字符串：name='liu',password='123456'
-    updateArticle(article) {
-        var art = article || this;
-        return {
-            title: art.title,
-            content: art.content,
-            update_date: utils.dateTime()
+    // 数字、小数<=两位
+    authMoney() {
+        if (!_.isNumber(this.money) || /^[0-9]+\.*[0-9]{3,}/.test(this.money)) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    dataFormat(articles) {
-        var _articles = [];
-        _.each(articles, function (article) {
-            _articles.push({
-                "id": article.id,
-                "title": article.title,
-                "content": article.content,
-                "permission": article.permission,
-                "createDate": article.createDate,
-                "updateDate": article.updateDate,
-                "user": {
-                    id: article.userId,
-                    name: article.name,
-                    nickname: article.nickname,
-                    phone: article.phone,
-                    avatar: article.avatar,
-                    permission: article.userPermission
-                },
-            });
-        });
-        return _articles;
+    // 字符串、字数<30
+    authLabel() {
+        if (!_.isString(this.label) || _.size(this.label) < 30) {
+            return false;
+        } else {
+            return true;
+        }
     }
+
+    // 数字、0||1
+    authStatus() {
+        if (!_.isNumber(this.status) || /[01]{1}/.test(this.status)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // 把对象转换成sql更新字符串：name='liu',password='123456'
+    updatetravels(travels) {
+        var travel = travels || this;
+        return {
+            title: travel.title,
+            content: travel.content,
+            money:travel.money,
+            label:travel.label,
+            status:travel.status,
+            update_date: utils.dateTime(),
+            permission:travel.permission
+        }
+    }
+
 }
 
-module.exports = article;
+module.exports = travels;

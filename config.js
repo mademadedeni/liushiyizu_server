@@ -1,16 +1,16 @@
 const pkg = require('./package.json');
 const isDev = process.env.NODE_ENV == "development" || process.env.NODE_ENV == undefined;
 const path = require("path");
+const IP = "10.17.2.1";
 
 module.exports = {
     // mode: 'universal',
     env: {
-        baseUrl: isDev ? 'http://localhost:3000' : 'http://www.liushiyizu.top',
-        apiUrl: isDev ? 'http://192.168.100.10:6868' : 'http://www.liushiyizu.top',
+        apiUrl: isDev ? `http://${IP}:6868` : 'http://www.liushiyizu.top',
     },
     server: isDev ? {
         port: 4000,
-        host: 'localhost',
+        host: `${IP}`,
     } : {
             port: 8000,
             host: 'localhost',

@@ -117,7 +117,7 @@ async function selectArticleById(ctx, next) {
             if (res.length > 0) {
                 ctx.body = utils.bodyFormat({
                     success: true,
-                    data: res[0]
+                    data: new articleModel().dataFormat(res)[0]
                 });
             } else {
                 ctx.body = utils.bodyFormat({
@@ -150,7 +150,7 @@ async function selectArticle(ctx, next) {
             if (res.length > 0) {
                 ctx.body = utils.bodyFormat({
                     success: true,
-                    data: res
+                    data: new articleModel().dataFormat(res)
                 });
             } else {
                 ctx.body = utils.bodyFormat({

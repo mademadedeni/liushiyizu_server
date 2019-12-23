@@ -24,10 +24,11 @@ async function start() {
         // cors 同源策略
         app.use(cors({
             origin: function (ctx) {
-                if (ctx.origin === "http://localhost:4000") {
+                if (ctx.origin === "http://10.17.2.1:4000") {
+                    return "http://10.17.2.1:5000"
+                }else{
                     return "http://localhost:3000"
                 }
-                return false;
             },
             exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
             maxAge: 30,
