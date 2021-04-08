@@ -8,5 +8,6 @@ router.get("/articles/delete/:id",article.deleteArticle);
 
 router.post("/article/create",article.createArticle);
 router.post("/articles/:id/update",article.updateArticle);
+router.post("/editor/upload",article.uploadImg);
 
 module.exports = router;

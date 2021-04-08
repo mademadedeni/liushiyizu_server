@@ -7,8 +7,7 @@
     "dev": "cross-env NODE_ENV=development nodemon server.js",
     "build": "nuxt build",
     "start": "cross-env NODE_ENV=production node server.js",
-    "pm2_start": "pm2 start pm2.config.js --only server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pm2_start": "pm2 start pm2.config.js --only server"
   },
   "keywords": [
     "nodejs"
@@ -28,7 +27,10 @@
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
     "mysql": "^2.17.1",
+    "mysql2": "^2.1.0",
     "redis": "^2.8.0",
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0",
     "svg-captcha": "^1.4.0",
     "uuid": "^3.3.3"
   },

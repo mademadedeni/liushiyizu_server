@@ -24,8 +24,8 @@ async function start() {
         // cors 同源策略
         app.use(cors({
             origin: function (ctx) {
-                if (ctx.origin === "http://10.17.2.1:4000") {
-                    return "http://10.17.2.1:5000"
+                if (ctx.origin === "http://10.17.1.8:4000") {
+                    return "http://10.17.1.8:5000"
                 }else{
                     return "http://localhost:3000"
                 }
@@ -68,7 +68,7 @@ async function start() {
         port: config.redis.port,
     });
     redisClient.on("error", function (err) {
-        console.log(err);
+        console.log("my redis error:",err);
     });
     redisClient.on("connect", function () {
         console.log('connect redis');
@@ -105,6 +105,7 @@ async function start() {
 
     // 静态资源
     app.use(koastatic(__dirname + '/static'));
+    app.use(koastatic(__dirname + '/temp'));
 
     //权限和登录验证
     app.use(checkLogin);

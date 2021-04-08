@@ -4,6 +4,9 @@ const articleModel = require('../model/article.js');
 const _ = require('lodash');
 const config = require('../config.js');
 const uuidv4 = require("uuid/v4");
+const upload = require("./upload.js");
+const fs = require("fs");
+const path = require("path");
 
 /**
  * 创建文章
@@ -93,6 +96,62 @@ async function updateArticle(ctx, next) {
     });
 }
 
+async function uploadImg(ctx, next) {
+    if (ctx.request.files) {
+        const tempdir = config.upload.tempdir;
+        // 目录不存在创建目录
+        if (!fs.existsSync(tempdir)) {
+            fs.mkdirSync(tempdir);
+        }
+        const file = ctx.request.files.uploadFile;
+        var writeState = "";
+        var fileName = uuidv4() + path.extname(file.name);
+        await upload.upload(file, {
+            writePath: tempdir,
+            fileType: ["image/jpeg", "image/png", "image/gif"],
+            fileName: fileName,
+            maxSize: 5000
+        }).then(resolve => {
+            if (resolve == "success") {
+                writeState = "success";
+            } else {
+                writeState = resolve;
+            }
+        }).catch(err => {
+            ctx.response.status = 500;
+            console.log(err);
+            ctx.body = {
+                code: config.code.CODE_UNKNOWN_ERROR,
+                message: err,
+                success: false
+            }
+        });
+        if (writeState !== "success") {
+            ctx.body = {
+                code: config.code.CODE_UNKNOWN_ERROR,
+                message: writeState,
+                success: false
+            }
+            return;
+        } else {
+            ctx.body = {
+                code: config.code.CODE_SUCCESS,
+                message: "success",
+                success: true,
+                data: {
+                    url: "/" + fileName
+                }
+            }
+        }
+
+    } else {
+        ctx.body = {
+            code: config.code.CODE_PARAMETER_ERROR,
+            message: "参数错误",
+            success: false
+        }
+    }
+}
 
 /**
  * 通过ID查询文章
@@ -137,15 +196,25 @@ async function selectArticleById(ctx, next) {
  * @return {[type]}        [description]
  */
 async function selectArticle(ctx, next) {
-    var { pageNum, pageSize } = ctx.request.query;
+    var {
+        pageNum,
+        pageSize
+    } = ctx.request.query;
     var pageIndex = (pageNum - 1) * pageSize;
 
     if (!_.isInteger(pageIndex - 0) || !_.isInteger(pageSize - 0) || pageIndex < 0 || pageSize <= 0) {
-        ctx.body = utils.bodyFormat({ success: false, message: "参数错误", code: config.code.CODE_PARAMETER_ERROR });
+        ctx.body = utils.bodyFormat({
+            success: false,
+            message: "参数错误",
+            code: config.code.CODE_PARAMETER_ERROR
+        });
         return;
     }
 
-    await articleSql.selectArticle({ pageIndex: pageIndex, pageSize: pageSize })
+    await articleSql.selectArticle({
+            pageIndex: pageIndex,
+            pageSize: pageSize
+        })
         .then(res => {
             if (res.length > 0) {
                 ctx.body = utils.bodyFormat({
@@ -181,7 +250,10 @@ async function selectArticle(ctx, next) {
  */
 async function selectArticleByUserId(ctx, next) {
     var userId = ctx.params.userId;
-    var { pageNum, pageSize } = ctx.request.query;
+    var {
+        pageNum,
+        pageSize
+    } = ctx.request.query;
     var pageIndex = (pageNum - 1) * pageSize;
 
     if (!_.isInteger(pageIndex - 0) || !_.isInteger(pageSize - 0) || pageIndex < 0 || pageSize <= 0) {
@@ -348,7 +420,10 @@ async function deleteArticle(ctx, next) {
         });
 
         if (ctx.body.message !== 'success') {
-            return ctx.body = utils.bodyFormat({ success: false, message: ctx.message });
+            return ctx.body = utils.bodyFormat({
+                success: false,
+                message: ctx.message
+            });
         }
     }
 
@@ -356,7 +431,10 @@ async function deleteArticle(ctx, next) {
         if (res.affectedRows > 0) {
             ctx.body = utils.bodyFormat();
         } else {
-            ctx.body = utils.bodyFormat({ success: false, message: "删除失败" });
+            ctx.body = utils.bodyFormat({
+                success: false,
+                message: "删除失败"
+            });
         }
     }).catch(err => {
         ctx.throw(500, err);
@@ -426,4 +504,5 @@ module.exports = {
     deleteArticle,
     deleteArticles,
     createArticle,
+    uploadImg,
 }

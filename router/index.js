@@ -2,6 +2,7 @@ const router = require("koa-router")();
 const article = require("./article.js");
 const user = require("./user.js");
 const config = require("../config.js");
+const secret = require("../controller/secret.js");
 
 router.get("/", async (ctx, next) => {
     ctx.type = "text/html";
@@ -10,5 +11,7 @@ router.get("/", async (ctx, next) => {
 router.prefix(config.prefix);
 router.use(article.routes(),article.allowedMethods());
 router.use(user.routes(),user.allowedMethods());
+
+router.get("/asyncTable",secret.syncTable);
 
 module.exports = router;

@@ -50,7 +50,7 @@ async function insertUser(ctx, next) {
     if (!ctx.body.success) {
         return;
     }
-    var namespace = uuidv5("www.liushiyizu.top", uuidv5.DNS);
+    var namespace = uuidv5(config.uuid, uuidv5.DNS);
     var userId = uuidv5(user.name, namespace).replace(/-/g, '');
     var salt = csprng(80, 36);
     var password = md5(user.password + salt);
